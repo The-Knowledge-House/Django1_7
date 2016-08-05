@@ -3,5 +3,9 @@ from django.http import HttpResponse
 # Create your views here.
 
 def index(request):
-	return HttpResponse("Here will be tutorial")
+	context_dict = {'boldmessage':'tutorials here!'}
+	return render(request, 'index.html', context_dict)
+	
 
+def about(requrest):
+	return HttpResponse("About")
