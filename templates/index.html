@@ -7,7 +7,24 @@
 
     <body>
         <h1>Tutorials718</h1>
-        Here is knowledge <strong>{{ boldmessage }}</strong><br />
+        Here is knowledge <br />
+        {{% if categories %}
+            <ul>
+                {% for category in categories %}
+                <!-- Following line changed to add an HTML hyperlink -->
+                <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+       {% else %}
+            <strong>There are no categories present.</strong>
+       {% endif %}
+
+       {% if pages %}
+	       <h1>Top 5 pages</h1>
+	       {% for page in pages %}
+	      	 <a href="{{page.url}}">{{page.title}}</a>
+	       {% endfor %}
+       {% endif %}
         <a href="/about/">About</a><br />
         <img src="{% static 'images/11371718233_6b7b937124_b.jpg' %}" alt="Picture of UF0907" /> <!-- New line -->
     </body>
