@@ -2,17 +2,18 @@
 <html>
 
     <head>
-        <title>Rango</title>
+        <title>Tutorial Repo 718</title>
     </head>
 
     <body>
         <h1>Tutorials718</h1>
+        <a href="/add_category/">Add a New Category</a><br />
         Here is knowledge <br />
         {{% if categories %}
             <ul>
                 {% for category in categories %}
                 <!-- Following line changed to add an HTML hyperlink -->
-                <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
+                <li><a href="/category/{{ category.slug }}">{{ category.name }}</a></li>
                 {% endfor %}
             </ul>
        {% else %}
