@@ -7,8 +7,19 @@
 
     <body>
         <h1>Tutorials718</h1>
+        {% if user.is_authenticated %}
+        <a href="/logout/">Logout</a><br />
+        {% else %}
+        <a href="/register/">Register Here</a>
+        <a href="/login/">Login</a>
+        {% endif %}
         <a href="/add_category/">Add a New Category</a><br />
         Here is knowledge <br />
+        {% if user.is_authenticated %}
+        <h1>Hello {{ user.username }}!</h1>
+        {% else %}
+        <h1>Hello world!</h1>
+        {% endif %}
         {{% if categories %}
             <ul>
                 {% for category in categories %}
