@@ -1,5 +1,5 @@
-{% load static %}
 {% extends 'base.html' %}
+{% load static %}
 {% block body_block %}
         {{% if categories %}
             <ul>
@@ -18,4 +18,4 @@
 	      	 <a href="{{page.url}}">{{page.title}}</a>
 	       {% endfor %}
        {% endif %}
-{ endblock }
+{% endblock %}
