@@ -15,7 +15,7 @@ def index(request):
 	
 
 def about(requrest):
-	return HttpResponse("About")
+	return render(request, 'about.html', {})
 
 def category(request, category_name_slug):
 	context_dict = {}
