@@ -57,8 +57,12 @@ def index(request):
 
 
 
-def about(requrest):
-	return render(request, 'about.html', {})
+def about(request):
+	if request.session.get('visits'):
+		count = request.session.get('visits')
+	else:
+		count = 1
+	return render(request, 'about.html', {'visits':count})
 
 def category(request, category_name_slug):
 	context_dict = {}

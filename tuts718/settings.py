@@ -36,7 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'TuTz718'
+    'TuTz718',
+    'registration',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -107,3 +108,11 @@ STATICFILES_DIRS = (
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SESSION_COOKIE_AGE = 1209600
+
+#registration module settings
+REGISTRATION_OPEN = True
+ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_AUTO_LOGIN = True
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'
+
