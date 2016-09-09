@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
-from models import Category, Page
+from models import Category, Page, UserProfile
 from forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from bing_search import run_query
+from django.contrib.auth.models import User
+
 # Create your views here.
 
 def index(request):
@@ -65,6 +67,7 @@ def about(request):
 		count = 1
 	return render(request, 'about.html', {'visits':count})
 
+@login_required
 def category(request, category_name_slug):
 	context_dict = {}
 	context_dict['query'] = None
@@ -89,10 +92,55 @@ def category(request, category_name_slug):
 
 	if not context_dict['query']:
 		context_dict['query'] =  category.name 
-		
+
 
 	return render(request, 'category.html', context_dict)
 
+@login_required
+def user_profile(request, user_username):
+	context_dict = {}
+	user = User.objects.get(username=user_username)
+	profile = UserProfile.objects.get(user=user)
+	context_dict['profile'] = profile
+
+	return render(request, 'profile.html', context_dict) 
+
+
+@login_required
+def edit_profile(request, user_username):
+	profile = get_object_or_404(UserProfile, user__username=user_username)
+
+	if request.user != profile.user: 
+		return HttpResponse('Access Denied')
+
+	if request.method == 'POST':
+		form = UserProfileForm(request.POST or None,  
+							request.FILES or None, 
+							instance=profile)
+		if form.is_valid():
+			form.save()
+					
+			return user_profile(request, profile.user.username)
+
+		else:
+			print form.errors
+
+	else:
+		form = UserProfileForm()
+
+	return render(request, 
+				'edit_profile.html', 
+				{'form':form, 'profile': profile})
+
+
+
+
+
+
+
+
+
+@login_required
 def add_category(request):
 	if request.method == 'POST':
 		form = CategoryForm(request.POST)
@@ -108,7 +156,7 @@ def add_category(request):
 	return render(request, 'add_category.html', {'form':form})
 
 
-
+@login_required
 def add_page(request, category_name_slug):
 	try:
 		cat = Category.objects.get(slug=category_name_slug)
