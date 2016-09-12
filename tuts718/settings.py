@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from keys import email_pass 
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -116,5 +118,11 @@ REGISTRATION_AUTO_LOGIN = True
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'jcarrano@theknowledgehouse.org'
+EMAIL_HOST_PASSWORD = email_pass
 
 

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from models import Page, Category, UserProfile
+from django.core.mail import EmailMessage
 
 class CategoryForm(forms.ModelForm):
 	name = forms.CharField(max_length=128, help_text="Please enter a category name.")
@@ -47,5 +48,34 @@ class UserProfileForm(forms.ModelForm):
 
 
 
+class ContactForm(forms.Form):
+	name = forms.CharField(required=True)
+	email = forms.CharField(widget=forms.EmailInput(), required=True)
+	subject = forms.CharField(required=True)
+	body = forms.CharField(widget=forms.Textarea(), required=True)
+
+	def send_message(self):
+		name = self.cleaned_data['name']
+		email = self.cleaned_data['email']
+		subject = self.cleaned_data['subject']
+		body = self.cleaned_data['body']
+
+		message = '''
+				New Message from {name} @ {email}
+				Subject: {subject}
+				Message:
+				{body}
+				'''.format(name=name,
+						email=email,
+						subject=subject,
+						body=body)
+		
+
+		email_msg = EmailMessage('New Contact Form Submission ',
+					message,
+					email,
+					['info@theknowledgehouse.org'], reply_to=[email])
+
+		email_msg.send()
 
 

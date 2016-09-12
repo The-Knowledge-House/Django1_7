@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from models import Category, Page, UserProfile
-from forms import CategoryForm, PageForm, UserForm, UserProfileForm
+from forms import CategoryForm, PageForm, UserForm, UserProfileForm, ContactForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from bing_search import run_query
@@ -277,6 +277,29 @@ def track_url(request):
 				pass
 	print 'forward', page.views
 	return redirect(url)
+
+
+
+def contact(request):
+	if request.method == 'POST':
+		form = ContactForm(request.POST)
+
+		if form.is_valid():
+			form.send_message()
+
+			return HttpResponseRedirect('/')
+		else:
+			print form.errors
+
+	form = ContactForm()
+	return render('contact.html', {'form':form})
+
+
+
+
+
+
+
 
 #def some_view(request):
  #   if not request.user.is_authenticated():
