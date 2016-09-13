@@ -2,6 +2,9 @@ from django import forms
 from django.contrib.auth.models import User
 from models import Page, Category, UserProfile
 from django.core.mail import EmailMessage
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+
 
 class CategoryForm(forms.ModelForm):
 	name = forms.CharField(max_length=128, help_text="Please enter a category name.")
@@ -77,5 +80,39 @@ class ContactForm(forms.Form):
 					['info@theknowledgehouse.org'], reply_to=[email])
 
 		email_msg.send()
+
+class PasswordRecoveryForm(forms.Form):
+	email = forms.EmailField(required=False)
+
+	def clean_email(self):
+		try:
+			return User.objects.get(email=self.cleaned_data['email'])
+		except User.DoesNotExist:
+			raise forms.ValidationError("Can't find user based on the email")
+		return self.cleaned_data['email']
+
+
+	def reset_email(self):
+		user = self.cleaned_data['email']
+
+		password =  get_random_string(length=8)
+		user.set_password(password)
+		user.save()
+
+		body = """
+		 Sorry you are having issues with your Prosecutor DB account. Below is your username and
+		 new password:
+		 Username: {username}
+		 Password: {password}
+		 You can login here: http://localhost:8000/login/
+		 Change your password here: http://localhost/settings/
+		 """.format(username=user.username, password=password)
+
+		send_mail(
+			'[Prosecutor DB] Password Reset', body, 'prosecutordb@colorofchange.org',
+			[user.email])
+
+
+
 
 

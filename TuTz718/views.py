@@ -2,12 +2,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from models import Category, Page, UserProfile
-from forms import CategoryForm, PageForm, UserForm, UserProfileForm, ContactForm
+from forms import CategoryForm, PageForm, UserForm, UserProfileForm, ContactForm, PasswordRecoveryForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from bing_search import run_query
 from django.contrib.auth.models import User
 from suggest import get_category_list
+from django.views.generic import FormView
+from django.contrib.auth.forms import PasswordChangeForm
+from braces.views import LoginRequiredMixin
+
 
 # Create your views here.
 
@@ -367,6 +371,17 @@ def auto_page_add(request):
   #  else:
     #    return HttpResponse("You are not logged in.")
 
+class PasswordRecoveryView(FormView):
+	template_name = 'password_recovery.html'
+	form_class = PasswordRecoveryForm
+	success_url = reverse_lazy('login')
+	def form_valid(self, form):
+		form.reset_email()
+		return super(PasswordRecoveryView, self).form_valid(form)
 
 
-
+class SettingsView(LoginRequiredMixin, FormView):
+	template_name = 'settings.html'
+	form_class = PasswordChangeForm
+	success_url = reverse_lazy('dashboard')
+	login_url = '/login/'

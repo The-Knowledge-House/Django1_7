@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'TuTz718',
     'registration',
+    'braces',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -5,3 +5,4 @@ django-registration-redux==1.4
 Pillow==3.3.0
 pycparser==2.14
 six==1.10.0
+django-braces==1.8.1
