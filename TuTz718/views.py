@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from bing_search import run_query
 from django.contrib.auth.models import User
+from suggest import get_category_list
 
 # Create your views here.
 
@@ -109,17 +110,33 @@ def user_profile(request, user_username):
 @login_required
 def edit_profile(request, user_username):
 	profile = get_object_or_404(UserProfile, user__username=user_username)
+	website = profile.website
+	pic = profile.pic
 
 	if request.user != profile.user: 
 		return HttpResponse('Access Denied')
 
 	if request.method == 'POST':
-		form = UserProfileForm(request.POST or None,  
-							request.FILES or None, 
-							instance=profile)
+		#form = UserProfileForm(request.POST or None,  
+		#					request.FILES or None, 
+		#					instance=profile)
 		if form.is_valid():
-			form.save()
+		#	form.save()
 					
+		#	return user_profile(request, profile.user.username)
+
+			if 'website' in request.POST:
+				profile.website = request.POST['website']
+			else:
+				profile.website = website
+
+			if 'picture' in request.FILES:
+				profile.picture = request.FILES['picture']
+			else:
+				profile.picture = pic
+
+			profile.save()
+
 			return user_profile(request, profile.user.username)
 
 		else:
@@ -296,9 +313,52 @@ def contact(request):
 
 
 
+@login_required
+def like_category(request):
+	cat_id = None
+	if request.method == 'GET':
+		cat_id = request.GET['category_id']
+	likes = 0
+	if cat_id:
+		cat = Category.objects.get(id=int(cat_id))
+		if cat:
+			likes = cat.likes + 1
+			cat.likes = likes
+			cat.save()
+	return HttpResponse(likes)
 
 
+def suggest_category(request):
+	cat_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with =  request.GET['suggestion']
+	cat_list = get_category_list(8, starts_with)
 
+	return render(request, 'rango/cats.html', {'cat_list': cat_list })
+
+
+@login_required
+def auto_page_add(request):
+	cat_id = None
+	url = None
+	title = None
+	context_dict = {}
+
+	if request.method == 'GET':
+		cat_id =  request.GET['categry_id']
+		url =  request.GET['url']
+		title = request.GET['title']
+
+		if cat_id:
+			category = Category.objects.get(id=int(cat_id))
+			p = Page.objects.get_or_create(category=category, title=title, url=url)
+
+			pages = Page.objects.filter(category=category).order_by('-views')
+
+			context_dict['pages'] = pages
+
+	return render(request, 'rango/page_list.html', context_dict)
 
 
 #def some_view(request):
@@ -306,6 +366,7 @@ def contact(request):
    #     return HttpResponse("You are logged in.")
   #  else:
     #    return HttpResponse("You are not logged in.")
+
 
 
 
