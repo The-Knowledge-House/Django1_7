@@ -305,9 +305,10 @@ def contact(request):
 			return HttpResponseRedirect('/')
 		else:
 			print form.errors
+	else:
+		form = ContactForm()
 
-	form = ContactForm()
-	return render('contact.html', {'form':form})
+	return render(request, 'contact.html', {'form':form})
 
 
 
@@ -333,7 +334,7 @@ def suggest_category(request):
 		starts_with =  request.GET['suggestion']
 
 	cat_list = get_category_list(8, starts_with)
-	
+
 	print cat_list
 
 	return render(request, 'cats.html', {'cats': cat_list })

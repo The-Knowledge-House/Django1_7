@@ -77,9 +77,11 @@ class ContactForm(forms.Form):
 		email_msg = EmailMessage('New Contact Form Submission ',
 					message,
 					email,
-					['info@theknowledgehouse.org'], reply_to=[email])
+					['info@theknowledgehouse.org'])
 
 		email_msg.send()
+
+
 
 class PasswordRecoveryForm(forms.Form):
 	email = forms.EmailField(required=False)

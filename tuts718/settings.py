@@ -123,7 +123,7 @@ LOGIN_URL = '/login/'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'jcarrano@theknowledgehouse.org'
-EMAIL_HOST_PASSWORD = email_pass
+EMAIL_HOST_USER = 'joeknows718@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get('MAIL_PASS')
 
 
