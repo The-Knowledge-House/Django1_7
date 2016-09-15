@@ -5,12 +5,13 @@
 
 <h1>{{profile.user.username}}</h1><br/>
 <h2>{{profile.website}}</h2>
-{% if profile.picture %}
+
 <h3>{{profile.picture.url}}</h3>
-{% endif %}
+
 
 {% if profile.user == user %}
 <a href="{% url 'edit_profile' profile.user.username %}">Edit Your Profile</a>
+<a href="{% url 'settings' %}">Change Your Password</a>
 {% endif %}
 
 {% endblock %}

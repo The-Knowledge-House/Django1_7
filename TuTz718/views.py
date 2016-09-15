@@ -11,7 +11,7 @@ from suggest import get_category_list
 from django.views.generic import FormView
 from django.contrib.auth.forms import PasswordChangeForm
 from braces.views import LoginRequiredMixin
-
+from django.core.urlresolvers import reverse_lazy
 
 # Create your views here.
 
@@ -115,30 +115,24 @@ def user_profile(request, user_username):
 def edit_profile(request, user_username):
 	profile = get_object_or_404(UserProfile, user__username=user_username)
 	website = profile.website
-	pic = profile.pic
+	pic = profile.picture
 
 	if request.user != profile.user: 
 		return HttpResponse('Access Denied')
 
 	if request.method == 'POST':
-		#form = UserProfileForm(request.POST or None,  
-		#					request.FILES or None, 
-		#					instance=profile)
+		form =  UserProfileForm(data=request.POST)
 		if form.is_valid():
-		#	form.save()
-					
-		#	return user_profile(request, profile.user.username)
+			print request.POST
 
-			if 'website' in request.POST:
+			if request.POST['website'] and request.POST['website'] != '':
 				profile.website = request.POST['website']
 			else:
 				profile.website = website
-
 			if 'picture' in request.FILES:
 				profile.picture = request.FILES['picture']
 			else:
 				profile.picture = pic
-
 			profile.save()
 
 			return user_profile(request, profile.user.username)
@@ -337,22 +331,29 @@ def suggest_category(request):
 	starts_with = ''
 	if request.method == 'GET':
 		starts_with =  request.GET['suggestion']
-	cat_list = get_category_list(8, starts_with)
 
-	return render(request, 'rango/cats.html', {'cat_list': cat_list })
+	cat_list = get_category_list(8, starts_with)
+	
+	print cat_list
+
+	return render(request, 'cats.html', {'cats': cat_list })
 
 
 @login_required
 def auto_page_add(request):
+	print 'started' 
 	cat_id = None
 	url = None
 	title = None
 	context_dict = {}
 
 	if request.method == 'GET':
-		cat_id =  request.GET['categry_id']
+		cat_id =  request.GET['category_id']
+		print cat_id
 		url =  request.GET['url']
+		print url
 		title = request.GET['title']
+		print title
 
 		if cat_id:
 			category = Category.objects.get(id=int(cat_id))
@@ -362,7 +363,7 @@ def auto_page_add(request):
 
 			context_dict['pages'] = pages
 
-	return render(request, 'rango/page_list.html', context_dict)
+	return render(request, 'page_list.html', context_dict)
 
 
 #def some_view(request):
@@ -379,9 +380,19 @@ class PasswordRecoveryView(FormView):
 		form.reset_email()
 		return super(PasswordRecoveryView, self).form_valid(form)
 
-
 class SettingsView(LoginRequiredMixin, FormView):
 	template_name = 'settings.html'
 	form_class = PasswordChangeForm
-	success_url = reverse_lazy('dashboard')
+	success_url = reverse_lazy('index')
 	login_url = '/login/'
+
+
+	def get_form(self, form_class):
+		return form_class(user=self.request.user, **self.get_form_kwargs())
+
+	def form_valid(self, form):
+		form.save()
+		update_session_auth_hash(self.request, form.user)
+		return super(SettingsView, self).form_valid(form)
+
+

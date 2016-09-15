@@ -22,7 +22,7 @@
             {% endif %}
             </p>
            
-            <div id="page">
+            <div id="pages">
             {% if pages %}
             <ul>
                 {% for page in pages %}
@@ -39,7 +39,7 @@
             {% else %}
                 <strong>No pages currently in category.</strong>
             {% endif %}
-            </div>
+         </div>
         {% else %}
             The specified category {{ category_name }} does not exist!
         {% endif %}
@@ -62,22 +62,5 @@
             </div>
         </div>
     {% endif %}
-    <div class="panel">
-        {% if result_list %}
-        <div class="panel-heading">
-                <h3 class="panel-title">Results</h3>
-                <!-- Display search results in an ordered list -->
-                <div class="panel-body">
-                <div class="list-group">
-                        {% for result in result_list %}
-                    <div class="list-group-item">
-                        <h4 class="list-group-item-heading"><a href="{{ result.link }}">{{ result.title }}</a></h4>
-                        <p class="list-group-item-text">{{ result.summary }}</p>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
-</div>
-</div>
+
  {% endblock %}

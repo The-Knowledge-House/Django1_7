@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from keys import email_pass 
+from keys import email_pass , aws_access_id, aws_access_secret_key
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 

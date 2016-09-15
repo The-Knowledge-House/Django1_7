@@ -4,8 +4,8 @@
  {% block body_block %}
 
 
-                <form role="form"  id="page_form" method="post" action="/user/edit/{{user.username}}/">
-            <h2 class="form-signin-heading">Edit your profile{{ category.name }}</h2>
+                <form role="form"   enctype="multipart/form-data" id="page_form" method="post" action="/user/edit/{{user.username}}/">
+            <h2 class="form-signin-heading">Edit your profile</h2>
                     {% csrf_token %}
                     {% for hidden in form.hidden_fields %}
                         {{ hidden }}

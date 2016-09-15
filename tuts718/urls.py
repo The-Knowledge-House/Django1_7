@@ -15,17 +15,6 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('TuTz718.urls')),
-    url(r'^accounts/register/$', MyRegistrationView.as_view(), name='registration_register'),
-    url(r'^accounts/', include('registration.backends.simple.urls')),
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG:
-    urlpatterns += patterns(
-        'django.views.static',
-        (r'^media/(?P<path>.*)',
-        'serve',
-        {'document_root': settings.MEDIA_ROOT}), )
-
-if not settings.DEBUG:
-        urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
