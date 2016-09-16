@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 from keys import email_pass , aws_access_id, aws_access_secret_key
+import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -22,11 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 't4@p+ckn4zc9ht-gp)*8s7y8!7b+)rtzddm7gl8m)0&5$$(rzo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True 
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -41,6 +42,7 @@ INSTALLED_APPS = (
     'TuTz718',
     'registration',
     'braces',
+    'storages',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -74,12 +76,20 @@ TEMPLATE_DIRS = (
     TEMPLATE_PATH,
     )
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+
+if not DEBUG:
+
+
+    DATABASES = {'default': dj_database_url.config(default='postgres:///djclass')}
+    DATABASES['default']['ENGINE'] = 'django_postgrespool'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -103,13 +113,32 @@ PASSWORD_HASHERS = (
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-STATIC_PATH = os.path.join(BASE_DIR,'static')
-STATIC_URL = '/static/'
+AWS_STORAGE_BUCKET_NAME = 'django-class'
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+AWS_HEADERS = {  # see http://developer.yahoo.com/performance/rules.html#expires
+        'Access-Control-Allow-Origin' : '*'
+    }
+
+STATICFILES_LOCATION = 'static'
+STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
+
+MEDIAFILES_LOCATION = 'media'
+MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
+DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+
+
+STATIC_PATH = os.path.join(BASE_DIR, "static")
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static_final')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#STATIC_URL = '/static/'
+
 STATICFILES_DIRS = (
-    STATIC_PATH,
-)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+       os.path.join(BASE_DIR, 'static'),
+       )
 SESSION_COOKIE_AGE = 1209600
 
 #registration module settings

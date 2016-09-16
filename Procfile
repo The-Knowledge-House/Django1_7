@@ -1,0 +1,1 @@
+web: gunicorn tuts718.wsgi --log-file -
